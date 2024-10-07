@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MetricsController } from './metrics.controller';
+import { AutomationController } from './automation.controller';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
-import { MetricService } from './services/metric.service';
+import { MetricService as AutomationService } from './services/automation.service';
 
 @Module({
  imports: [
@@ -11,7 +11,7 @@ import { MetricService } from './services/metric.service';
      },
    }),
  ],
- controllers: [MetricsController],
- providers: [MetricService],
+ controllers: [AutomationController],
+ providers: [AutomationService],
 })
 export class MetricsModule {}
