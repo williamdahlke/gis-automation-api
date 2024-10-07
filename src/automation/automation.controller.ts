@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { MetricService } from './services/automation.service';
+import { AutomationService } from './services/automation.service';
 
 @ApiBearerAuth()
 @ApiTags('automation')
 @Controller('automation')
 export class AutomationController {
- constructor(private readonly service: MetricService) {}
+ constructor(private readonly service: AutomationService) {}
 
  @Get()
  public async getMetrics() {

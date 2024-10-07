@@ -7,7 +7,6 @@ const API_KEY = process.env.API_KEY;
 
 export class AuthMiddleware implements NestMiddleware{
     use(req: any, res: any, next: NextFunction) {        
-        console.log(req.headers) ; 
         const authHeader = req.headers['authorization'];
    
         if (!authHeader) {
@@ -15,7 +14,6 @@ export class AuthMiddleware implements NestMiddleware{
         }
         
         const token = authHeader.split(' ')[1];
-
         if (token === API_KEY) {
             next();
         } else {

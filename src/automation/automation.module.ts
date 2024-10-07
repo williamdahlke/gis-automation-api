@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AutomationController } from './automation.controller';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
-import { MetricService as AutomationService } from './services/automation.service';
+import { AutomationService as AutomationService } from './services/automation.service';
 
 @Module({
  imports: [
