@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Gauge, Histogram } from 'prom-client';
-import { IGroupedUsers } from 'src/shared/interfaces';
 import { GaugeMetric, Metric, WegUser } from 'src/shared/models';
+import { GroupedUsers } from 'src/shared/models/groupedUsers';
 
 @Injectable()
 export class AutomationService {
@@ -12,7 +12,7 @@ export class AutomationService {
 
   private histogramList : Histogram[] = [];
   private gaugeList: Gauge[] = [];
-  private activeUsersArray: WegUser[] = []
+  private groupedUsers = new GroupedUsers();
 
   addOrUpdateGauge(gauge: GaugeMetric) {
     if (!this.getGaugeByName(gauge.MetricName)){
@@ -53,36 +53,10 @@ export class AutomationService {
   }
 
   addOrUpdateActiveUsersMetric(metric: Metric) {
-    const selectedUser = this.activeUsersArray.find((x) => x.Name == metric.User!.Name && x.Unity == metric.User!.Unity);
-    if (selectedUser == undefined) this.activeUsersArray.push(metric.User!);
-
-    this.filterActiveUsersByTime();
-    let groupedUsersArray = this.groupActiveUsersByUnity();
+    const selectedUser = this.groupedUsers.getUserByNameAndUnity(metric.User);        
+    if (selectedUser == undefined) this.groupedUsers.setUser(metric.User);
+    const groupedUsersArray = this.groupedUsers.filterAndGroupUsers();
     this.setActiveUsersMetricValue(groupedUsersArray);
-  }
-
-  private filterActiveUsersByTime() {
-    let filtroData = new Date();
-    filtroData.setDate(filtroData.getDate() - 90);
-    this.activeUsersArray = this.activeUsersArray.filter((x) => x.LastOpened >= filtroData.getTime());
-  }
-
-  private groupActiveUsersByUnity() {
-    let groupedUsers: IGroupedUsers = this.groupByUnity(this.activeUsersArray);
-    let groupedUsersArray = Object.values(groupedUsers);
-
-    return groupedUsersArray;
-  }
-
-  private groupByUnity(users: WegUser[]): IGroupedUsers {
-    return users.reduce((groups: IGroupedUsers, user: WegUser) => {
-      const unity = user.Unity;
-      if (!groups[unity]) {
-        groups[unity] = { unity: unity, totalUsers: 0 };
-      }
-      groups[unity].totalUsers++;
-      return groups;
-    }, {});
   }
 
   private setActiveUsersMetricValue(groupedUsersArray: { unity: string; totalUsers: number }[]) {
