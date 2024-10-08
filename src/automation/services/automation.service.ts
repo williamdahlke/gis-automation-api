@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Gauge, Histogram } from 'prom-client';
-import { GaugeMetric, Metric, WegUser } from 'src/shared/models';
+import { GaugeMetric, HistogramMetric, Metric, WegUser } from 'src/shared/models';
 import { GroupedUsers } from 'src/shared/models/groupedUsers';
 
 @Injectable()
@@ -49,6 +49,34 @@ export class AutomationService {
   getGaugeByName(name: string): Gauge | undefined {
     return this.gaugeList.find(gaugeItem =>
       Object.values(gaugeItem).some(value => value === name)
+    );
+  }  
+
+  addOrUpdateHistogram(histogram : HistogramMetric){
+    if (!this.getHistogramByName(histogram.MetricName)){
+      const tempHistogram : Histogram = new Histogram({
+        name: histogram.MetricName,
+        help: histogram.Help,
+        labelNames: histogram.Label!.LabelNames,
+        buckets: histogram.Buckets
+      });
+  
+      const labels = histogram.Label.fillLabelsArray(); 
+  
+      tempHistogram.observe(labels, histogram.ElapsedTimeMs);         
+      this.histogramList.push(tempHistogram);    
+    } else{    
+      const result = this.getHistogramByName(histogram.MetricName);    
+      if (result){
+        const labels = histogram.Label.fillLabelsArray();
+        result.observe(labels, histogram.ElapsedTimeMs);      
+      }    
+    }  
+  }
+
+  getHistogramByName(name: string): Histogram | undefined {
+    return this.histogramList.find(histogramItem =>
+      Object.values(histogramItem).some(value => value === name)
     );
   }
 

@@ -38,5 +38,16 @@ export class AutomationController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR })
   @Post('/metrics/histogram')
-  public async insertHistogram(@Body() histogram: HistogramMetric) {}
+  public async insertHistogram(@Body() histogram: HistogramMetric) {
+    const histogramInstance = plainToInstance(HistogramMetric, histogram);
+
+    validate(histogramInstance).then((errors) => {
+      if (errors.length > 0) {
+        throw new Error('The request has some erros, such as: ' + errors);
+      }
+    });
+
+    this.service.addOrUpdateHistogram(histogramInstance);
+    this.service.addOrUpdateActiveUsersMetric(histogramInstance);    
+  }
 }
