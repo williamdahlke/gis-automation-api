@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AutomationController } from './automation.controller';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { makeCounterProvider, PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { AutomationService as AutomationService } from './services/automation.service';
 
 @Module({
@@ -12,6 +12,13 @@ import { AutomationService as AutomationService } from './services/automation.se
    }),
  ],
  controllers: [AutomationController],
- providers: [AutomationService],
+ providers: [AutomationService,
+             makeCounterProvider({
+              name: 'gis_usuarios_ativos_total',
+              help: 'Número de usuários ativos nos últimos 3 meses',
+              labelNames: ['unity']
+             })
+ ],
+
 })
 export class MetricsModule {}
