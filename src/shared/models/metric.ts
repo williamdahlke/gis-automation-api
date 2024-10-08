@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Label } from "./label";
 import { WegUser } from "./wegUser";
+import { Type } from "class-transformer";
 
 export class Metric{
 
@@ -16,11 +17,13 @@ export class Metric{
     @ApiProperty()
     public Operation : number = 0;
 
+    @Type(() => Label)
     @ApiProperty()
     public Label? : Label;
 
+    @Type(() => WegUser)
     @ApiProperty()
-    public User? : WegUser;
-    
+    public User? : WegUser;    
+
     constructor(){}
 }

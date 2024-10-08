@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Gauge, Histogram } from 'prom-client';
-import { GroupedUsers } from 'src/shared/interfaces';
+import { IGroupedUsers } from 'src/shared/interfaces';
 import { GaugeMetric, Metric, WegUser } from 'src/shared/models';
 
 @Injectable()
@@ -68,14 +68,14 @@ export class AutomationService {
   }
 
   private groupActiveUsersByUnity() {
-    let groupedUsers: GroupedUsers = this.groupByUnity(this.activeUsersArray);
+    let groupedUsers: IGroupedUsers = this.groupByUnity(this.activeUsersArray);
     let groupedUsersArray = Object.values(groupedUsers);
 
     return groupedUsersArray;
   }
 
-  private groupByUnity(users: WegUser[]): GroupedUsers {
-    return users.reduce((groups: GroupedUsers, user: WegUser) => {
+  private groupByUnity(users: WegUser[]): IGroupedUsers {
+    return users.reduce((groups: IGroupedUsers, user: WegUser) => {
       const unity = user.Unity;
       if (!groups[unity]) {
         groups[unity] = { unity: unity, totalUsers: 0 };

@@ -3,15 +3,14 @@ import { ApiProperty } from "@nestjs/swagger";
 export class Label{
     
     @ApiProperty()
-    public LabelNames : string[];
+    public LabelNames : string[] = [];
 
     @ApiProperty()    
-    public LabelValues : string[];
+    public LabelValues : string[] = [];
 
-    constructor(LabelNames : string[] = [],
-                LabelValues : string[] = []){
+    constructor(LabelNames : string[], LabelValues : string[]){
         this.LabelNames = LabelNames;
-        this.LabelValues = LabelValues;            
+        this.LabelValues = LabelValues;
     }
 
     fillLabelsArray() {
