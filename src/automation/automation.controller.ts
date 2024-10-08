@@ -1,6 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AutomationService } from './services/automation.service';
+import { GaugeMetric, HistogramMetric } from 'src/shared/models';
+import { validate } from 'class-validator';
 
 @ApiBearerAuth()
 @ApiTags('automation')
@@ -8,8 +10,21 @@ import { AutomationService } from './services/automation.service';
 export class AutomationController {
  constructor(private readonly service: AutomationService) {}
 
- @Get()
- public async getMetrics() {
-   return this.service.getMetricsData();
- }
+  @Post('/metrics/gauge')
+  public async insertGauge(@Body() gauge : GaugeMetric){
+    console.log(gauge);
+    validate(gauge).then(errors => {
+    console.log(errors);
+    if (errors.length > 0) {
+      throw new Error("A requisição possui alguns erros, sendo: " + errors)
+    }});
+    
+    this.service.addOrUpdateGauge(gauge);
+    this.service.addOrUpdateActiveUsersMetric(gauge);
+  }
+
+  @Post('/metrics/histogram')
+  public async insertHistogram(@Body() histogram : HistogramMetric){
+
+  }
 }
