@@ -80,7 +80,7 @@ export class AutomationService {
     );
   }
 
-  addOrUpdateActiveUsersMetric(metric: Metric) {
+  updateActiveUsersMetric(metric: Metric) {
     const selectedUser = this.groupedUsers.getUserByNameAndUnity(metric.User);        
     if (selectedUser == undefined) this.groupedUsers.setUser(metric.User);
     const groupedUsersArray = this.groupedUsers.filterAndGroupUsers();

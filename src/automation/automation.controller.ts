@@ -20,7 +20,7 @@ export class AutomationController {
   @Post('/metrics/gauge')
   public async insertGauge(@Body() gauge: GaugeMetric) {
     const gaugeInstance = plainToInstance(GaugeMetric, gauge);
-
+    
     validate(gaugeInstance).then((errors) => {
       if (errors.length > 0) {
         throw new Error('The request has some erros, such as: ' + errors);
@@ -28,7 +28,7 @@ export class AutomationController {
     });
 
     this.service.addOrUpdateGauge(gaugeInstance);
-    this.service.addOrUpdateActiveUsersMetric(gaugeInstance);
+    this.service.updateActiveUsersMetric(gaugeInstance);
   }
 
   @ApiResponse({
@@ -48,6 +48,6 @@ export class AutomationController {
     });
 
     this.service.addOrUpdateHistogram(histogramInstance);
-    this.service.addOrUpdateActiveUsersMetric(histogramInstance);    
+    this.service.updateActiveUsersMetric(histogramInstance);    
   }
 }
